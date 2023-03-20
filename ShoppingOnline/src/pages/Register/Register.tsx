@@ -1,7 +1,7 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { Link } from 'react-router-dom'
-import { rules } from 'src/utils/rules'
+import { getRules } from 'src/utils/rules'
 
 interface FormData {
   email: string
@@ -13,11 +13,24 @@ export default function Register() {
   const {
     register,
     handleSubmit,
+    watch,
+    getValues, // lấy values khi có event - no la 1 function
     formState: { errors }
   } = useForm<FormData>()
-  const onSubmit = handleSubmit((data) => {
-    console.log(data)
-  })
+
+  const rules = getRules(getValues)
+  const onSubmit = handleSubmit(
+    (data) => {
+      // console.log(data)
+    },
+    (data) => {
+      const password = getValues('password')
+      // console.log('password', password)
+    }
+  )
+
+  // const formValues = watch('email')
+  // console.log('formValues', formValues)
   return (
     <div className='bg-orange'>
       <div className='max-w-7xl mx-auto px-4'>
@@ -38,6 +51,7 @@ export default function Register() {
                 <input
                   type='password'
                   placeholder='Password'
+                  autoComplete='on'
                   {...register('password', rules.password)}
                   className='p-3 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
                 />
@@ -47,7 +61,10 @@ export default function Register() {
                 <input
                   type='password'
                   placeholder='Confirm Password'
-                  {...register('confirm_password', rules.confirm_password)}
+                  autoComplete='on'
+                  {...register('confirm_password', {
+                    ...rules.confirm_password
+                  })}
                   className='p-3 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
                 />
                 <div className='mt-1 text-red-600 min-h-[1.25rem] text-sm'>{errors.confirm_password?.message}</div>

@@ -32,6 +32,7 @@ export default function Login() {
                   type='password'
                   name='password'
                   placeholder='Password'
+                  autoComplete='on'
                   className='p-3 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
                 />
                 <div className='mt-1 text-red-600 min-h-[1rem] text-sm'></div>
