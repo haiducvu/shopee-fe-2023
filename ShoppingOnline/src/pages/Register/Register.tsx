@@ -4,6 +4,9 @@ import { Link } from 'react-router-dom'
 import Input from 'src/components/Input/Input'
 import { schema, Schema } from 'src/utils/rules'
 import { yupResolver } from '@hookform/resolvers/yup'
+import { useMutation } from '@tanstack/react-query'
+import { registerAccount } from 'src/api/auth.api'
+import { omit } from 'lodash'
 
 // interface FormData {
 //   email: string
@@ -18,24 +21,24 @@ export default function Register() {
     register,
     handleSubmit,
     watch,
-    getValues, // lấy values khi có event - no la 1 function
     formState: { errors }
   } = useForm<FormData>({
     resolver: yupResolver(schema)
   })
 
-  const onSubmit = handleSubmit(
-    (data) => {
-      // console.log(data)
-    },
-    (data) => {
-      const password = getValues('password')
-      // console.log('password', password)
-    }
-  )
+  const registerAccountMutation = useMutation({
+    mutationFn: (body: Omit<FormData, 'confirm_password'>) => registerAccount(body)
+  })
 
-  const value = watch()
-  console.log(value)
+  const onSubmit = handleSubmit((data) => {
+    const body = omit(data, ['confirm_password'])
+    registerAccountMutation.mutate(body, {
+      onSuccess: (data) => {
+        console.log(data)
+      }
+    })
+  })
+
   return (
     <div className='bg-orange'>
       <div className='container'>
