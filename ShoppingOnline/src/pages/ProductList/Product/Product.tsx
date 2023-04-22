@@ -1,14 +1,20 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { Product as ProductType } from 'src/types/product.type'
+import { formatCurrency, formatNumberToSocialStyle } from 'src/utils/utils'
 
-export default function Product() {
+interface Props {
+  product: ProductType
+}
+
+export default function Product({ product }: Props) {
   return (
     <Link to='/'>
       <div className='bg-white shadow rounded-sm hover:translate-y-[-0.04rem] hover:shadow-md duration-100 transition-transform overflow-hidden'>
         <div className='w-full pt-[100%] relative'>
           <img
-            src='https://plus.unsplash.com/premium_photo-1679619558250-41fa96ef187c?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80'
-            alt=''
+            src={product.image}
+            alt={product.name}
             className='absolute top-0 left-0 bg-white w-full h-full object-cover'
           />
         </div>
@@ -20,11 +26,11 @@ export default function Product() {
           <div className='flex items-center mt-3'>
             <div className='line-through max-w-[50%] text-gray-500 truncate'>
               <span className='text-xs'>₫</span>
-              <span>5.000</span>
+              <span>{formatCurrency(product.price_before_discount)}</span>
             </div>
             <div className='text-orange truncate ml-1'>
               <span className='text-xs'>₫</span>
-              <span>2.000</span>
+              <span>{formatCurrency(product.price)}</span>
             </div>
           </div>
           <div className='mt-3 flex items-center justify-end'>
@@ -63,7 +69,7 @@ export default function Product() {
               </div>
             </div>
             <div className='ml-2 text-sm'>
-              <span>5.66k</span>
+              <span>{formatNumberToSocialStyle(product.sold)}</span>
               <span className='ml-1'>Đã bán</span>
             </div>
           </div>
