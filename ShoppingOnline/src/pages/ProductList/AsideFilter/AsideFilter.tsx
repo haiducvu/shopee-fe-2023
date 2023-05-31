@@ -1,6 +1,5 @@
 import { Link, createSearchParams, useNavigate } from 'react-router-dom'
 import Button from 'src/components/Button'
-import Input from 'src/components/Input'
 import path from 'src/constants/path'
 import { Category } from 'src/types/category.type'
 import classNames from 'classnames'
@@ -12,6 +11,7 @@ import InputNumber from 'src/components/InputNumber'
 import RatingStarts from '../RatingStarts'
 import { omit } from 'lodash'
 import { QueryConfig } from 'src/hook/useQueryConfig'
+import InputV2 from 'src/components/InputV2'
 
 interface Props {
   queryConfig: QueryConfig
@@ -139,7 +139,7 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
         <div>Khoảng giá</div>
         <form className='mt-2' onSubmit={onSubmit}>
           <div className='flex items-start'>
-            <Controller
+            {/* <Controller
               control={control}
               name='price_min'
               render={({ field }) => {
@@ -158,13 +158,25 @@ export default function AsideFilter({ queryConfig, categories }: Props) {
                   />
                 )
               }}
+            /> */}
+            <InputV2
+              control={control}
+              name='price_min'
+              type='number'
+              className='grow'
+              placeholder='₫ TỪ'
+              classNameInput='p-1 w-full outline-none border border-gray-300 focus:border-gray-500 rounded-sm focus:shadow-sm'
+              classNameError='hidden'
+              onChange={() => {
+                trigger('price_max')
+              }}
             />
-
             <div className='mx-2 mt-2 shrink-0'>-</div>
             <Controller
               control={control}
               name='price_max'
               render={({ field }) => {
+                // console.log('field', field)
                 return (
                   <InputNumber
                     type='text'
