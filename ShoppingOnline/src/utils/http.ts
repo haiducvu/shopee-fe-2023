@@ -1,4 +1,4 @@
-import { BASE_URL } from '../../env/env';
+import { BASE_URL } from '../../env/env'
 import { setAccessTokenToLS, clearLS, getAccessTokenFromLS, setProfileToLS } from './auth'
 import axios, { AxiosError, AxiosInstance } from 'axios'
 import HttpStatusCode from 'src/constants/httpStatusCode.enum'
@@ -53,6 +53,10 @@ class Http {
           const data: any | undefined = error.response?.data
           const message = data.message || error.message
           toast.error(message)
+        }
+        if (error.response?.status === HttpStatusCode.Unauthorized) {
+          clearLS()
+          // window.location.reload()
         }
         return Promise.reject(error)
       }
