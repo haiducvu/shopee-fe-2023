@@ -1,6 +1,6 @@
 import React, { useContext } from 'react'
 import { Navigate, Outlet, useRoutes } from 'react-router-dom'
-import Profile from './components/Profile'
+import Profile from './pages/User/pages/Profile'
 import MainLayout from './layouts/MainLayout'
 import RegisterLayout from './layouts/RegisterLayout'
 import Login from './pages/Login'
