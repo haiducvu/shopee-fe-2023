@@ -13,6 +13,7 @@ import Cart from './pages/Cart'
 import CartLayout from './pages/CartLayout'
 import UserLayout from './pages/User/layouts/UserLayout/UserLayout'
 import ChangePassword from './pages/User/pages/ChangePassword/ChangePassword'
+import HistoryPurchase from './pages/User/pages/HistoryPurchase'
 
 function ProtectedRoute() {
   const { isAuthenticated } = useContext(AppContext)
@@ -75,6 +76,10 @@ export default function useRouteElement() {
             {
               path: path.changePassword,
               element: <ChangePassword />
+            },
+            {
+              path: path.historyPurchase,
+              element: <HistoryPurchase />
             }
           ]
         }
