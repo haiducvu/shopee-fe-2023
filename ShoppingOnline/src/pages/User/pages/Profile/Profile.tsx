@@ -5,7 +5,9 @@ import { useForm, Controller } from 'react-hook-form'
 import { toast } from 'react-toastify'
 import Button from 'src/components/Button'
 import Input from 'src/components/Input'
+import InputFile from 'src/components/InputFile'
 import InputNumber from 'src/components/InputNumber'
+import config from 'src/constants/config'
 import { ErrorResponse } from 'src/types/utils.type'
 import { setProfileToLS } from 'src/utils/auth'
 import { userSchema, UserSchema } from 'src/utils/rules'
@@ -19,9 +21,7 @@ type FormDataError = Omit<FormData, 'date_of_birth'> & {
   date_of_birth?: string
 }
 const profileSchema = userSchema.pick(['name', 'address', 'phone', 'date_of_birth', 'avatar'])
-
 export default function Profile() {
-  const fileInputRef = useRef<HTMLInputElement>(null)
   const { setProfile } = useContext(AppContext)
   const [file, setFile] = useState<File>()
 
@@ -35,7 +35,7 @@ export default function Profile() {
   })
   const profile = profileData?.data.data
   const updateProfileMutation = useMutation(userApi.updateProfile)
-  const uploadAvatarMutation = useMutation(userApi.uploadAvatar)
+  const uploadAvatarMutaion = useMutation(userApi.uploadAvatar)
   const {
     register,
     control,
@@ -73,7 +73,7 @@ export default function Profile() {
       if (file) {
         const form = new FormData()
         form.append('image', file)
-        const uploadRes = await uploadAvatarMutation.mutateAsync(form)
+        const uploadRes = await uploadAvatarMutaion.mutateAsync(form)
         avatarName = uploadRes.data.data
         setValue('avatar', avatarName)
       }
@@ -101,15 +101,8 @@ export default function Profile() {
     }
   })
 
-  const onFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('ttt')
-    const fileFromLocal = event.target.files?.[0]
-    setFile(fileFromLocal)
-  }
-
-  const handleUpload = () => {
-    console.log('xx')
-    fileInputRef.current?.click()
+  const handleChangeFile = (file?: File) => {
+    setFile(file)
   }
 
   return (
@@ -196,14 +189,7 @@ export default function Profile() {
                 className='h-full w-full rounded-full object-cover'
               />
             </div>
-            <input className='hidden' type='file' accept='.jpg,.jpeg,.png' ref={fileInputRef} onChange={onFileChange} />
-            <button
-              className='flex h-10 items-center justify-end rounded-sm border bg-white px-6 text-sm text-gray-600 shadow-sm'
-              type='button'
-              onClick={handleUpload}
-            >
-              Chọn ảnh
-            </button>
+            <InputFile onChange={handleChangeFile} />
             <div className='mt-3 text-gray-400'>
               <div>Dụng lượng file tối đa 1 MB</div>
               <div>Định dạng:.JPEG, .PNG</div>
