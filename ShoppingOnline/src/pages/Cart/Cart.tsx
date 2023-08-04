@@ -9,7 +9,7 @@ import { formatCurrency, generateNameId } from 'src/utils/utils'
 import { Purchase } from 'src/types/purchase.type'
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { produce } from 'immer'
-import { keyBy } from 'lodash'
+import keyBy from 'lodash/keyBy'
 import { toast } from 'react-toastify'
 import { AppContext } from 'src/components/contexts/app.context'
 

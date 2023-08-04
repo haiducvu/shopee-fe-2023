@@ -1,3 +1,3 @@
-import UserSideNav from '.'
+import UserSideNav from './UserSideNav'
 
 export default UserSideNav

@@ -9,7 +9,7 @@ import { Controller, useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import InputNumber from 'src/components/InputNumber'
 import RatingStarts from '../RatingStarts'
-import { omit } from 'lodash'
+import omit from 'lodash/omit'
 import { QueryConfig } from 'src/hook/useQueryConfig'
 import InputV2 from 'src/components/InputV2'
 
