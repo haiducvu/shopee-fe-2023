@@ -31,8 +31,8 @@ class Http {
       headers: {
         'Content-Type': 'application/json',
         // custom access/ refresh token, nếu không truyền thì sẽ có default
-        // 'expire-access-token': 10, // 10s
-        // 'expire-refresh-token': 60 * 60 // 1h
+        // 'expire-access-token': 10, // 10s OR 60 * 60 * 24, // 1 ngày
+        // 'expire-refresh-token': 60 * 60 // 1h OR 60 * 60 * 24 * 160 // 160 ngày
       }
     })
 
