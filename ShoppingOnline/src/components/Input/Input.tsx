@@ -33,7 +33,7 @@ export default function Input({
   }
   const registerResult = register && name ? register(name, rules) : null
   return (
-    <div className={className}>
+    <div className={'relative ' + className}>
       {/* <input className={classNameInput} {...registerResult} {...rest} /> */}
       <input className={classNameInput} {...registerResult} {...rest} type={handleType()} />
       {rest.type === 'password' && openEye && (
