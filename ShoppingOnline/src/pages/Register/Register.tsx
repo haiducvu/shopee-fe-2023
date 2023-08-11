@@ -9,7 +9,7 @@ import authApi from 'src/api/auth.api'
 import omit from 'lodash/omit'
 import { isAxiosUnprocessableEntityError } from 'src/utils/utils'
 import { ErrorResponse } from 'src/types/utils.type'
-import { AppContext } from 'src/components/contexts/app.context'
+import { AppContext } from 'src/contexts/app.context'
 import Button from 'src/components/Button'
 import { Helmet } from 'react-helmet-async'
 

@@ -11,7 +11,7 @@ import { useContext, useEffect, useMemo, useState } from 'react'
 import { produce } from 'immer'
 import keyBy from 'lodash/keyBy'
 import { toast } from 'react-toastify'
-import { AppContext } from 'src/components/contexts/app.context'
+import { AppContext } from 'src/contexts/app.context'
 
 export default function Cart() {
   const { extendedPurchases, setExtendedPurchases } = useContext(AppContext)

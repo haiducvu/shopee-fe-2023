@@ -3,7 +3,7 @@ import { useContext, lazy, Suspense } from 'react'
 import { Navigate, Outlet, useRoutes } from 'react-router-dom'
 import MainLayout from './layouts/MainLayout'
 import RegisterLayout from './layouts/RegisterLayout'
-import { AppContext } from './components/contexts/app.context'
+import { AppContext } from './contexts/app.context'
 import CartLayout from './pages/CartLayout'
 import UserLayout from './pages/User/layouts/UserLayout/UserLayout'
 

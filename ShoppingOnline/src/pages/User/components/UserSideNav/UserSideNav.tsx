@@ -1,7 +1,7 @@
 import classNames from 'classnames'
 import { useContext } from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import { AppContext } from 'src/components/contexts/app.context'
+import { AppContext } from 'src/contexts/app.context'
 import path from 'src/constants/path'
 import { getAvatarUrl } from 'src/utils/utils'
 

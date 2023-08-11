@@ -12,7 +12,7 @@ import { setProfileToLS } from 'src/utils/auth'
 import { userSchema, UserSchema } from 'src/utils/rules'
 import { getAvatarUrl, isAxiosUnprocessableEntityError } from 'src/utils/utils'
 import DateSelect from '../../components/DateSelect'
-import { AppContext } from 'src/components/contexts/app.context'
+import { AppContext } from 'src/contexts/app.context'
 import { userApi } from 'src/api/user.api'
 
 function Info() {
