@@ -3,12 +3,13 @@ import { render, screen, waitFor } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import matchers from '@testing-library/jest-dom/matchers'
 import App from './App'
-import { BrowserRouter } from 'react-router-dom'
+import { BrowserRouter, MemoryRouter } from 'react-router-dom'
+import { logScreen } from './utils/testUtils'
 
 expect.extend(matchers)
 
 describe('App', () => {
-  test('App render và chuyển trang', async () => {
+  test('App render and Navigator', async () => {
     // render(<App />, {
     //   wrapper: BrowserRouter
     // })
@@ -19,12 +20,10 @@ describe('App', () => {
     //  * số lần run phụ thuộc vào timeout và interval
     //  * mặc định: timeout = 1000ms và interval = 50ms
     //  */
-
     // // Verify vào đúng trang chủ
     // await waitFor(() => {
     //   expect(document.querySelector('title')?.textContent).toBe('Trang chủ | Shopee Clone')
     // })
-
     // // Verify chuyển sang trang login
     // await user.click(screen.getByText(/Đăng nhập/i))
     // await waitFor(() => {
@@ -32,5 +31,17 @@ describe('App', () => {
     //   expect(document.querySelector('title')?.textContent).toBe('Đăng nhập | Shopee Clone')
     // })
     // screen.debug(document.body.parentElement as HTMLElement, 99999999)
-  })
+  }),
+    test('Return Not Found Page', async () => {
+      const badRoute = '/some/bad/route'
+      render(
+        <MemoryRouter initialEntries={[badRoute]}>
+          <App />
+        </MemoryRouter>
+      )
+      await waitFor(() => {
+        expect(screen.getByText(/Page Not Found/i)).toBeInTheDocument()
+      })
+      // await logScreen()
+    })
 })
