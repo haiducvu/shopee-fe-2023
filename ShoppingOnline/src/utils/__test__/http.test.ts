@@ -1,5 +1,6 @@
 import { describe, expect, it, beforeEach } from 'vitest'
 import { Http } from '../http'
+import { access_token_1s, refresh_token_1000days } from 'src/msw/auth.msw'
 import HttpStatusCode from 'src/constants/httpStatusCode.enum'
 import { setAccessTokenToLS, setRefreshTokenToLS } from '../auth'
 
@@ -9,10 +10,7 @@ describe('http axios', () => {
     localStorage.clear()
     http = new Http().instance
   })
-  const access_token_1s =
-    'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNmY5MzVlNWZkYzVmMDM3ZTZmNjhkMyIsImVtYWlsIjoiZDNAZ21haWwuY29tIiwicm9sZXMiOlsiVXNlciJdLCJjcmVhdGVkX2F0IjoiMjAyMi0xMi0xNVQxNDowMzoyMy41NzdaIiwiaWF0IjoxNjcxMTEzMDAzLCJleHAiOjE2NzExMTMwMDR9.-gQIpbbKFlRqBlpiiAOBD4puP8jcMtZ2lobXPcy1zmU'
-  const refresh_token_1000days =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYzNmY5MzVlNWZkYzVmMDM3ZTZmNjhkMyIsImVtYWlsIjoiZDNAZ21haWwuY29tIiwicm9sZXMiOlsiVXNlciJdLCJjcmVhdGVkX2F0IjoiMjAyMi0xMi0xNVQxNDowNTozNS41MTVaIiwiaWF0IjoxNjcxMTEzMTM1LCJleHAiOjE3NTc1MTMxMzV9.OHDBqBjhih1fgNe6-mWo0PQ-IcukNz4ljlXUCxM-8V8'
+
   it('Call API', async () => {
     const res = await http.get('products')
     expect(res.status).toBe(HttpStatusCode.Ok)
@@ -20,8 +18,8 @@ describe('http axios', () => {
 
   it('Auth Request', async () => {
     // await http.post('login', {
-    //   email: 'test',
-    //   password: 'test'
+    //   email: 'q@merry.com',
+    //   password: '123213'
     // })
     // const res = await http.get('me')
     // expect(res.status).toBe(HttpStatusCode.Ok)

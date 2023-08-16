@@ -28,7 +28,7 @@ describe('Login', () => {
   it('Hiển thị lỗi khi nhập value input sai', async () => {
     fireEvent.change(emailInput, {
       target: {
-        value: 'test@mail'
+        value: 'q@merry.com'
       }
     })
     fireEvent.change(passwordInput, {
@@ -46,7 +46,7 @@ describe('Login', () => {
   it('Không nên hiển thị lỗi khi nhập lại value đúng', async () => {
     fireEvent.change(emailInput, {
       target: {
-        value: 'test@mail.com'
+        value: 'q@merry.com'
       }
     })
     fireEvent.change(passwordInput, {
