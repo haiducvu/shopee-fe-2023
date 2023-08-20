@@ -61,7 +61,7 @@ describe('Login', () => {
       expect(screen.queryByText('Độ dài từ 6 - 160 ký tự')).toBeFalsy()
     })
     fireEvent.submit(submitButton)
-    await logScreen()
+    // await logScreen()
     await waitFor(() => {
       expect(document.querySelector('title')?.textContent).toBe('Trang chủ | Shopee Clone')
     })

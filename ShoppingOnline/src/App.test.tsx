@@ -7,7 +7,7 @@ import { BrowserRouter, MemoryRouter } from 'react-router-dom'
 import { logScreen, renderWithRouter } from './utils/testUtils'
 import path from './constants/path'
 
-expect.extend(matchers)
+// expect.extend(matchers)
 
 describe('App', () => {
   test('App render and Navigator', async () => {

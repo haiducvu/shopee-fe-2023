@@ -21,12 +21,10 @@ function App() {
 
   return (
     <HelmetProvider>
-      <AppProvider>
-        <ErrorBoundary>
-          {routeElements}
-          <ToastContainer />
-        </ErrorBoundary>
-      </AppProvider>
+      <ErrorBoundary>
+        {routeElements}
+        <ToastContainer />
+      </ErrorBoundary>
       <ReactQueryDevtools initialIsOpen={false} />
     </HelmetProvider>
   )
