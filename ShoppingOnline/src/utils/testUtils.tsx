@@ -7,7 +7,7 @@ import { BrowserRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { AppProvider, getInitialAppContext } from 'src/contexts/app.context'
 
-const delay = (time: number) => {
+export const delay = (time: number) => {
   new Promise((resolve) => {
     setTimeout(() => {
       resolve(true)
@@ -15,22 +15,22 @@ const delay = (time: number) => {
   })
 }
 
-export const logScreen = async (
-  body: HTMLElement = document.body.parentElement as HTMLElement,
-  options?: waitForOptions
-) => {
-  const { timeout = 1000 } = options || {}
-  await waitFor(
-    async () => {
-      expect(await delay(timeout - 100)).toBe(true)
-    },
-    {
-      ...options,
-      timeout
-    }
-  )
-  screen.debug(body, 99999999)
-}
+// export const logScreen = async (
+//   body: HTMLElement = document.body.parentElement as HTMLElement,
+//   options?: waitForOptions
+// ) => {
+//   const { timeout = 1000 } = options || {}
+//   await waitFor(
+//     async () => {
+//       expect(await delay(timeout - 100)).toBe(true)
+//     },
+//     {
+//       ...options,
+//       timeout
+//     }
+//   )
+//   screen.debug(body, 99999999)
+// }
 
 const createWrapper = () => {
   const queryClient = new QueryClient({
