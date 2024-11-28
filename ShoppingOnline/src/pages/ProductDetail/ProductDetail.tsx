@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import DOMPurify from 'dompurify'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import productApi from 'src/api/product.api'
 import ProductRating from 'src/components/ProductRating'
@@ -15,8 +15,12 @@ import path from 'src/constants/path'
 import { useTranslation } from 'react-i18next'
 import { Helmet } from 'react-helmet-async'
 import { convert } from 'html-to-text'
+import { productDetailVM } from './mapProductDetailVM'
+import { productVM } from '../ProductList/product-list.mapper'
+import { AppContext } from 'src/contexts/app.context'
 
 export default function ProductDetail() {
+  const { profile } = useContext(AppContext)
   const { t } = useTranslation(['product'])
   const [buyCount, setBuyCount] = useState(1)
   const { nameId } = useParams()
@@ -27,7 +31,10 @@ export default function ProductDetail() {
   })
   const [currentIndexImages, setCurrentIndexImages] = useState([0, 5])
   const [activeImage, setActiveImage] = useState('')
-  const product = productDetailData?.data.data
+
+  const product = (productDetailData?.data as any)?.metadata
+    ? productDetailVM((productDetailData?.data as any)?.metadata)
+    : null
   const imageRef = useRef<HTMLImageElement>(null)
   const currentImages = useMemo(
     () => (product ? product.images.slice(...currentIndexImages) : []),
@@ -37,7 +44,7 @@ export default function ProductDetail() {
   const queryConfig: ProductListConfig = {
     limit: '20',
     page: '1',
-    category: product?.category._id
+    category: product?.category.name
   }
 
   const { data: productsData } = useQuery({
@@ -48,7 +55,8 @@ export default function ProductDetail() {
     staleTime: 3 * 60 * 1000,
     enabled: Boolean(product)
   })
-  // console.log(productsData)
+
+  const mappedProducts = productsData ? productVM(productsData) : []
 
   const addToCartMutation = useMutation(purchaseApi.addToCart)
 
@@ -61,13 +69,13 @@ export default function ProductDetail() {
   }, [product])
 
   const buyNow = async () => {
-    const res = await addToCartMutation.mutateAsync({ buy_count: buyCount, product_id: product?._id as string })
-    const purchase = res.data.data
-    navigate(path.cart, {
-      state: {
-        purchaseId: purchase._id
-      }
-    })
+    // const res = await addToCartMutation.mutateAsync({ buy_count: buyCount, product_id: product?._id as string })
+    // const purchase = res.data.data
+    // navigate(path.cart, {
+    //   state: {
+    //     purchaseId: purchase._id
+    //   }
+    // })
   }
 
   const handleBuyCount = (value: number) => {
@@ -75,8 +83,9 @@ export default function ProductDetail() {
   }
 
   const addToCart = () => {
+    console.log('xxx', product)
     addToCartMutation.mutate(
-      { buy_count: buyCount, product_id: product?._id as string },
+      { userId: profile ? profile!._id : '', buy_count: buyCount, product },
       {
         onSuccess: (data) => {
           toast.success(data.data.message, { autoClose: 1000 })
@@ -104,18 +113,26 @@ export default function ProductDetail() {
   }
 
   const handleZoom = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    // console.log('event', event)
     const rect = event.currentTarget.getBoundingClientRect()
     // console.log('rect', rect)
     const image = imageRef.current as HTMLImageElement
+    // console.log('image', image)
     const { naturalHeight, naturalWidth } = image
+
+    // console.log('naturalHeight, naturalWidth', naturalHeight, naturalWidth)
 
     const { offsetX, offsetY } = event.nativeEvent
 
-    const top = offsetY * (1 - naturalHeight / rect.height)
-    const left = offsetX * (1 - naturalWidth / rect.width)
+    const zoomLevel = 2.5
 
-    image.style.width = naturalWidth + 'px'
-    image.style.height = naturalHeight + 'px'
+    // console.log('offsetX, offsetY', offsetX, offsetY)
+
+    const top = offsetY * (1 - (naturalHeight * zoomLevel) / rect.height)
+    const left = offsetX * (1 - (naturalHeight * zoomLevel) / rect.width)
+
+    image.style.width = naturalHeight * zoomLevel + 'px'
+    image.style.height = naturalHeight * zoomLevel + 'px'
     image.style.maxWidth = 'unset'
     image.style.top = top + 'px'
     image.style.left = left + 'px'
@@ -296,9 +313,9 @@ export default function ProductDetail() {
       <div className='mt-8'>
         <div className='container'>
           <div className='uppercase text-gray-400'>CÓ THỂ BẠN CŨNG THÍCH</div>
-          {productsData && (
+          {mappedProducts?.data?.products?.length > 0 && (
             <div className='mt-6 grid grid-cols-2 gap-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6'>
-              {productsData.data.data.products.map((product) => (
+              {mappedProducts?.data?.products.map((product: any) => (
                 <div className='col-span-1' key={product._id}>
                   <Product product={product} />
                 </div>

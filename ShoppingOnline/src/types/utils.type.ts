@@ -1,4 +1,5 @@
 export interface SuccessResponse<Data> {
+  metadata: any
   message: string
   data: Data
 }

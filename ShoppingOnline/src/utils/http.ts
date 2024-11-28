@@ -1,11 +1,12 @@
-import { BASE_URL } from '../../env/env'
+import config from 'src/constants/config'
 import {
   setAccessTokenToLS,
   setRefreshTokenToLS,
   clearLS,
   getAccessTokenFromLS,
   setProfileToLS,
-  getAccessRefreshTokenFromLS
+  getRefreshTokenFromLS,
+  getProfileFromLS
 } from './auth'
 import axios, { AxiosError, type AxiosInstance } from 'axios'
 import HttpStatusCode from 'src/constants/httpStatusCode.enum'
@@ -22,13 +23,15 @@ export class Http {
   private refreshTokenRequest: Promise<string> | null
   constructor() {
     this.accessToken = getAccessTokenFromLS()
-    this.refreshToken = getAccessRefreshTokenFromLS()
+    this.refreshToken = getRefreshTokenFromLS()
     this.refreshTokenRequest = null
     this.instance = axios.create({
-      baseURL: BASE_URL,
+      baseURL: config.baseUrl,
       timeout: 10000,
       headers: {
         'Content-Type': 'application/json',
+        'x-api-key':
+          '3f693ef000dfd9ba216db1100e29bc06b07a74baf5f16109da5403bd48e027813c63d9b690fbbd8773fa0f8115bdfc57eb326850770bd424e025824e4b4a399d'
         // custom access/ refresh token, nếu không truyền thì sẽ có default
         // 'expire-access-token': 10, // 10s OR 60 * 60 * 24, // 1 ngày
         // 'expire-refresh-token': 60 * 60 // 1h OR 60 * 60 * 24 * 160 // 160 ngày
@@ -40,6 +43,7 @@ export class Http {
       (config) => {
         if (this.accessToken && config.headers) {
           config.headers.authorization = this.accessToken
+          config.headers['x-client-id'] = getProfileFromLS()._id
           return config
         }
         return config
@@ -54,12 +58,12 @@ export class Http {
       (response) => {
         const { url } = response.config
         if (url === URL_LOGIN || url === URL_REGISTER) {
-          const data = response.data as AuthResponse
-          this.accessToken = data.data.access_token
-          this.refreshToken = data.data.refresh_token
+          const data = response.data as AuthResponse as any
+          this.accessToken = data.metadata.tokens.accessToken
+          this.refreshToken = data.metadata.tokens.refreshToken
           setAccessTokenToLS(this.accessToken)
           setRefreshTokenToLS(this.refreshToken)
-          setProfileToLS(data.data.user)
+          setProfileToLS(data.metadata.shop)
         } else if (url === URL_LOGOUT) {
           this.accessToken = ''
           this.refreshToken = ''

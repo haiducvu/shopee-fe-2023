@@ -5,7 +5,7 @@ import http from 'src/utils/http'
 const URL = 'purchases'
 
 const purchaseApi = {
-  addToCart(body: { product_id: string; buy_count: number }) {
+  addToCart(body: { userId: string; buy_count: number; product: any }) {
     return http.post<SuccessResponse<Purchase>>(`${URL}/add-to-cart`, body)
   },
   getPurchases(params: { status: PurchaseListStatus }) {
@@ -14,7 +14,7 @@ const purchaseApi = {
     })
   },
   buyProducts(body: { product_id: string; buy_count: number }[]) {
-    return http.post<SuccessResponse<Purchase[]>>(`${URL}/buy-products`, body)
+    return http.post<SuccessResponse<Purchase[]>>(`checkout/buy-products`, body)
   },
   updatePurchase(body: { product_id: string; buy_count: number }) {
     return http.put<SuccessResponse<Purchase>>(`${URL}/update-purchase`, body)

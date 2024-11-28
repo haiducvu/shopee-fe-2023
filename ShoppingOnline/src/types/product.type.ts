@@ -16,6 +16,7 @@ export interface Product {
   image: string
   createdAt: string
   updatedAt: string
+  shopId: string
 }
 
 export interface ProductList {

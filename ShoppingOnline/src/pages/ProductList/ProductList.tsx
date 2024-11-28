@@ -8,9 +8,11 @@ import { ProductListConfig } from 'src/types/product.type'
 import categoryApi from 'src/api/category.api'
 import useQueryConfig from 'src/hook/useQueryConfig'
 import { Helmet } from 'react-helmet-async'
+import { productVM } from './product-list.mapper'
 
 export default function ProductList() {
   const queryConfig = useQueryConfig()
+  
   const { data: productsData } = useQuery({
     queryKey: ['products', queryConfig],
     queryFn: () => {
@@ -26,6 +28,14 @@ export default function ProductList() {
       return categoryApi.getCategories()
     }
   })
+  
+  const mappedProducts = productsData ? productVM(productsData) : []
+  const mappedCategories: any = categoriesData
+    ? {
+        ...categoriesData,
+        data: (categoriesData as any)?.data?.metadata
+      }
+    : []
 
   return (
     <div className='bg-gray-200 py-6'>
@@ -34,21 +44,21 @@ export default function ProductList() {
         <meta name='description' content='Trang chủ dự án Shoppe Clone' />
       </Helmet>
       <div className='container'>
-        {productsData && (
+        {mappedProducts && (
           <div className='grid grid-cols-12 gap-6'>
             <div className='col-span-3'>
-              <AsideFilter queryConfig={queryConfig} categories={categoriesData?.data.data || []} />
+              <AsideFilter queryConfig={queryConfig} categories={mappedCategories?.data || []} />
             </div>
             <div className='col-span-9'>
-              <SortProductList queryConfig={queryConfig} pageSize={productsData.data.data.pagination.page_size} />
+              <SortProductList queryConfig={queryConfig} pageSize={mappedProducts?.data?.pagination?.page_size} />
               <div className='mt-6 grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
-                {productsData.data.data.products.map((product) => (
+                {mappedProducts?.data?.products.map((product: any) => (
                   <div className='col-span-1' key={product._id}>
                     <Product product={product}></Product>
                   </div>
                 ))}
               </div>
-              <Pagination queryConfig={queryConfig} pageSize={productsData.data.data.pagination.page_size}></Pagination>
+              <Pagination queryConfig={queryConfig} pageSize={mappedProducts?.data?.pagination?.page_size}></Pagination>
             </div>
           </div>
         )}

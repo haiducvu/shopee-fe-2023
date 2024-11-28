@@ -26,14 +26,13 @@ export default function Header() {
     queryFn: () => purchaseApi.getPurchases({ status: purchasesStatus.inCart }),
     enabled: isAuthenticated
   })
-
-  const purchasesInCart = purchasesInCartData?.data.data
+  const purchasesInCart = purchasesInCartData?.data?.metadata?.cart_products || [] // TODO handle API
 
   return (
     <div className='bg-[linear-gradient(-180deg,#f53d2d,#f63)] pb-5 pt-2 text-white'>
       <div className='container'>
         <NavHeader />
-        <div className='mt-4 grid grid-cols-12 items-end gap-4'>
+        <div className='mt-4 grid grid-cols-12 items-end gap-4'>  
           <Link to='/' className='col-span-2'>
             <svg viewBox='0 0 192 65' className='h-11 w-full fill-white'>
               <g fillRule='evenodd'>
@@ -75,20 +74,16 @@ export default function Header() {
                     <div className='p-2'>
                       <div className='capitalize text-gray-400'>Sản phẩm mới thêm</div>
                       <div className='mt-5'>
-                        {purchasesInCart.slice(0, MAX_PURCHASES).map((purchase) => (
+                        {purchasesInCart.slice(0, MAX_PURCHASES).map((purchase: any) => (
                           <div className='mt-2 flex py-2 hover:bg-gray-100' key={purchase._id}>
                             <div className='flex-shrink-0'>
-                              <img
-                                src={purchase.product.image}
-                                alt={purchase.product.name}
-                                className='h-11 w-11 object-cover'
-                              />
+                              <img src={purchase.image} alt={purchase.name} className='h-11 w-11 object-cover' />
                             </div>
                             <div className='ml-2 flex-grow overflow-hidden'>
-                              <div className='truncate'>{purchase.product.name}</div>
+                              <div className='truncate'>{purchase.name}</div>
                             </div>
                             <div className='ml-2 flex-shrink-0'>
-                              <span className='text-orange'>₫{formatCurrency(purchase.product.price)}</span>
+                              <span className='text-orange'>₫{formatCurrency(purchase.price)}</span>
                             </div>
                           </div>
                         ))}

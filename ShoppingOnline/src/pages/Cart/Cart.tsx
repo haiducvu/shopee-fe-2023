@@ -19,7 +19,6 @@ export default function Cart() {
     queryKey: ['purchases', { status: purchasesStatus.inCart }],
     queryFn: () => purchaseApi.getPurchases({ status: purchasesStatus.inCart })
   })
-
   const location = useLocation()
   const choosenPurchaseIdFromLocation = (location.state as { purchaseId: string } | null)?.purchaseId
 
@@ -29,21 +28,23 @@ export default function Cart() {
       refetch()
     }
   })
-  const purchasesInCart = purchasesInCartData?.data.data
+  const purchasesInCart: any = purchasesInCartData?.data.metadata.cart_products || null
+  const cartId = purchasesInCartData?.data.metadata._id || ''
+  const userId = purchasesInCartData?.data.metadata.cart_userId || ''
   const isAllChecked = useMemo(() => extendedPurchases.every((purchase) => purchase.checked), [extendedPurchases])
   const checkedPurchases = useMemo(() => extendedPurchases.filter((purchase) => purchase.checked), [extendedPurchases])
   const checkedPurchasesCount = checkedPurchases.length
   const totalCheckedPurchasePrice = useMemo(
     () =>
       checkedPurchases.reduce((result, current) => {
-        return result + current.product.price * current.buy_count
+        return result + current.price * current.buy_count
       }, 0),
     [checkedPurchases]
   )
   const totalCheckedPurchaseSavingPrice = useMemo(
     () =>
       checkedPurchases.reduce((result, current) => {
-        return result + (current.product.price_before_discount - current.product.price) * current.buy_count
+        return result + (current.price_before_discount - current.price) * current.buy_count
       }, 0),
     [checkedPurchases]
   )
@@ -52,7 +53,7 @@ export default function Cart() {
     setExtendedPurchases((prev) => {
       const extendedPurchasesObject = keyBy(prev, '_id')
       return (
-        purchasesInCart?.map((purchase) => {
+        purchasesInCart?.map((purchase: any) => {
           const isChoosenPurchaseFromLocation = choosenPurchaseIdFromLocation === purchase._id
           return {
             ...purchase,
@@ -95,7 +96,7 @@ export default function Cart() {
         draft[purchaseIndex].disabled = true
       })
     )
-    updatePurchaseMutation.mutate({ product_id: purchase.product._id, buy_count: value })
+    updatePurchaseMutation.mutate({ product_id: purchase._id, buy_count: value })
   }
 
   const handleTypeQuantity = (purchaseIndex: number) => (value: number) => {
@@ -134,13 +135,30 @@ export default function Cart() {
     deletePurchasesMutation.mutate(purchaseIds)
   }
 
+  // const handleBuyPurchases = () => {
+  //   if (!checkedPurchases.length) return
+  //   const body = checkedPurchases.map((purchase) => ({
+  //     product_id: purchase._id,
+  //     buy_count: purchase.buy_count,
+  //     cartId: purchase._id // TODO
+  //   }))
+  //   buyProductsMutation.mutate(body)
+  // }
+
+  // try api checkout review
   const handleBuyPurchases = () => {
     if (!checkedPurchases.length) return
-    const body = checkedPurchases.map((purchase) => ({
-      product_id: purchase.product._id,
+    const shop_order_ids = Array.from(new Set(checkedPurchases.map((purchase: any) => purchase))).map((purchase) => ({
+      shopId: purchase.shopId,
+      product_id: purchase._id,
       buy_count: purchase.buy_count
     }))
-    buyProductsMutation.mutate(body)
+    const payload = {
+      cartId,
+      userId,
+      shop_order_ids
+    }
+    buyProductsMutation.mutate(payload as any)
   }
 
   return (
@@ -173,7 +191,7 @@ export default function Cart() {
             </div>
             {extendedPurchases.length > 0 && (
               <div className='my-3 rounded-sm bg-white p-5 shadow'>
-                {extendedPurchases.map((purchase, index) => (
+                {extendedPurchases.map((purchase: any, index) => (
                   <div
                     key={purchase._id}
                     className='mb-5 grid grid-cols-12 items-center rounded-sm border border-gray-200 bg-white py-5 px-4 text-center text-sm text-gray-500 first:mt-0'
@@ -193,21 +211,21 @@ export default function Cart() {
                             <Link
                               className='h-20 w-20 flex-shrink-0'
                               to={`${path.home}${generateNameId({
-                                name: purchase.product.name,
-                                id: purchase.product._id
+                                name: purchase.name,
+                                id: purchase._id
                               })}`}
                             >
-                              <img alt={purchase.product.name} src={purchase.product.image} />
+                              <img alt={purchase.name} src={purchase.image} />
                             </Link>
                             <div className='flex-grow px-2 pt-1 pb-2'>
                               <Link
                                 to={`${path.home}${generateNameId({
-                                  name: purchase.product.name,
-                                  id: purchase.product._id
+                                  name: purchase.name,
+                                  id: purchase._id
                                 })}`}
                                 className='text-left line-clamp-2'
                               >
-                                {purchase.product.name}
+                                {purchase.name}
                               </Link>
                             </div>
                           </div>
@@ -219,17 +237,17 @@ export default function Cart() {
                         <div className='col-span-2'>
                           <div className='flex items-center justify-center'>
                             <span className='text-gray-300 line-through'>
-                              ₫{formatCurrency(purchase.product.price_before_discount)}
+                              ₫{formatCurrency(purchase.price_before_discount)}
                             </span>
-                            <span className='ml-3'>₫{formatCurrency(purchase.product.price)}</span>
+                            <span className='ml-3'>₫{formatCurrency(purchase.price)}</span>
                           </div>
                         </div>
                         <div className='col-span-1'>
                           <QuantityController
-                            max={purchase.product.quantity}
+                            max={purchase.quantity}
                             value={purchase.buy_count}
                             classNameWrapper='flex items-center'
-                            onIncrease={(value) => handleQuantity(index, value, value <= purchase.product.quantity)}
+                            onIncrease={(value) => handleQuantity(index, value, value <= purchase.quantity)}
                             onDecrease={(value) => handleQuantity(index, value, value >= 1)}
                             onType={handleTypeQuantity(index)}
                             onFocusOut={(value) =>
@@ -237,7 +255,7 @@ export default function Cart() {
                                 index,
                                 value,
                                 value >= 1 &&
-                                  value <= purchase.product.quantity &&
+                                  value <= purchase.quantity &&
                                   value !== (purchasesInCart as Purchase[])[index].buy_count
                               )
                             }
@@ -245,9 +263,7 @@ export default function Cart() {
                           />
                         </div>
                         <div className='col-span-1'>
-                          <span className='text-orange'>
-                            ₫{formatCurrency(purchase.product.price * purchase.buy_count)}
-                          </span>
+                          <span className='text-orange'>₫{formatCurrency(purchase.price * purchase.buy_count)}</span>
                         </div>
                         <div className='col-span-1'>
                           <button

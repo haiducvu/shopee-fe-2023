@@ -34,8 +34,8 @@ export default function Login() {
 
   const onSubmit = handleSubmit((data) => {
     loginMutation.mutate(data, {
-      onSuccess: (data) => {
-        setIsAuthenticated(true), setProfile(data.data.data.user), navigate('/')
+      onSuccess: (data: any) => {
+        setIsAuthenticated(true), setProfile(data.data.metadata.shop), navigate('/')
       },
       onError: (error) => {
         if (isAxiosUnprocessableEntityError<ErrorResponse<FormData>>(error)) {
